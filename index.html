@@ -467,18 +467,19 @@
       }
 
       const allBooks = [];
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        allBooks.push({
-          id: doc.id,
-          author: data.author || '',
-          publication: data.publication || '',
-          quantity: data.quantity || '',
-          edition: data.edition || '',
-          rack: data.rack || '',
-          shelf: data.shelf || ''
-        });
-      });
+snapshot.forEach(doc => {
+  const data = doc.data();
+  allBooks.push({
+    id: (doc.id || '').toLowerCase(),
+    author: (data.Author || '').toLowerCase(),
+    publication: (data.Publication || '').toLowerCase(),
+    quantity: (data.Quantity || '').toLowerCase(),
+    edition: (data.Edition || '').toLowerCase(),
+    rack: (data.Rack || '').toLowerCase(),
+    shelf: (data.Shelf || '').toLowerCase(),
+    volume: (data.Volume || '').toLowerCase()
+  });
+});
 
       const queryWords = query.toLowerCase().split(/\s+/);
 
@@ -555,5 +556,6 @@
 
 </body>
 </html>
+
 
 
