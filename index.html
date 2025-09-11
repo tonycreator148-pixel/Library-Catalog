@@ -409,14 +409,9 @@
   </div>
 
 <script>
-  // Toggle this variable to enable or disable the search type buttons
-  const enableSearchTypeButtons = false;  // set to true to enable buttons
-
-  // Show or hide the buttons container accordingly
+  const enableSearchTypeButtons = false;  // set true to enable
   const buttonsContainer = document.getElementById('searchTypeButtonsContainer');
-  if (!enableSearchTypeButtons) {
-    buttonsContainer.style.display = 'none';
-  }
+  if (!enableSearchTypeButtons) buttonsContainer.style.display = 'none';
 
   const firebaseConfig = {
     apiKey: "AIzaSyBF1hRE2scvmQBIyRNBT7EPZl5PFLEzeTk",
@@ -447,7 +442,7 @@
   });
 
   searchBtn.addEventListener('click', async () => {
-    const query = searchInput.value.trim();
+    const query = searchInput.value.trim().toLowerCase();
     if (!query) {
       resultsSection.style.display = 'none';
       return;
@@ -467,37 +462,30 @@
       }
 
       const allBooks = [];
-snapshot.forEach(doc => {
-  const data = doc.data();
-  allBooks.push({
-    id: (doc.id || '').toLowerCase(),
-    author: (data.Author || '').toLowerCase(),
-    publication: (data.Publication || '').toLowerCase(),
-    quantity: (data.Quantity || '').toLowerCase(),
-    edition: (data.Edition || '').toLowerCase(),
-    rack: (data.Rack || '').toLowerCase(),
-    shelf: (data.Shelf || '').toLowerCase(),
-    volume: (data.Volume || '').toLowerCase()
-  });
-});
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        allBooks.push({
+          title: (data.title || '').toLowerCase(),
+          author: (data.author || '').toLowerCase(),
+          publication: (data.publication || '').toLowerCase(),
+          edition: (data.edition || '').toLowerCase(),
+          quantity: (data.quantity || '').toLowerCase(),
+          rack: (data.rack || '').toLowerCase(),
+          shelf: (data.shelf || '').toLowerCase(),
+          volume: (data.volume || '').toLowerCase()
+        });
+      });
 
-      const queryWords = query.toLowerCase().split(/\s+/);
+      const queryWords = query.split(/\s+/);
 
       const matchedBooks = allBooks.filter(book => {
         let targetFields = [];
+        if (searchType === 'title') targetFields = [book.title];
+        else if (searchType === 'author') targetFields = [book.author];
+        else if (searchType === 'publication') targetFields = [book.publication];
+        else targetFields = [book.title, book.author, book.publication];
 
-        if (searchType === 'title') {
-          targetFields = [book.id];
-        } else if (searchType === 'author') {
-          targetFields = [book.author];
-        } else if (searchType === 'publication') {
-          targetFields = [book.publication];
-        } else {
-          targetFields = [book.id, book.author, book.publication];
-        }
-
-        const combinedText = targetFields.join(' ').toLowerCase();
-
+        const combinedText = targetFields.join(' ');
         return queryWords.every(word => combinedText.includes(word));
       });
 
@@ -510,9 +498,8 @@ snapshot.forEach(doc => {
       matchedBooks.forEach(book => {
         const card = document.createElement('div');
         card.className = 'book-tile';
-
         card.innerHTML = `
-          <h4>${book.id}</h4>
+          <h4>${book.title}</h4>
           <p><strong>Author:</strong> ${book.author || 'Unknown'}</p>
           <div class="extra-details" aria-hidden="true">
             ${book.publication ? `<p><strong>Publication:</strong> ${book.publication}</p>` : ''}
@@ -523,26 +510,17 @@ snapshot.forEach(doc => {
             ${book.shelf ? `<p class="shelf">Shelf: ${book.shelf}</p>` : ''}
           </div>
         `;
-
         card.addEventListener('click', () => {
-          // Close any other expanded cards before toggling this one
           document.querySelectorAll('.book-tile.expanded').forEach(otherCard => {
             if (otherCard !== card) {
               otherCard.classList.remove('expanded');
               otherCard.querySelector('.extra-details').setAttribute('aria-hidden', 'true');
             }
           });
-
           const extraDetails = card.querySelector('.extra-details');
           const isExpanded = card.classList.toggle('expanded');
-
-          if (isExpanded) {
-            extraDetails.setAttribute('aria-hidden', 'false');
-          } else {
-            extraDetails.setAttribute('aria-hidden', 'true');
-          }
+          extraDetails.setAttribute('aria-hidden', isExpanded ? 'false' : 'true');
         });
-
         resultsList.appendChild(card);
       });
 
@@ -554,8 +532,10 @@ snapshot.forEach(doc => {
   });
 </script>
 
+
 </body>
 </html>
+
 
 
 
