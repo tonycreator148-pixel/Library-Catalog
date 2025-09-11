@@ -465,7 +465,7 @@
       snapshot.forEach(doc => {
         const data = doc.data();
         allBooks.push({
-          title: (data.title || '').toLowerCase(),
+          title: (data.bookName || '').toLowerCase(),
           author: (data.author || '').toLowerCase(),
           publication: (data.publication || '').toLowerCase(),
           edition: (data.edition || '').toLowerCase(),
@@ -535,6 +535,7 @@
 
 </body>
 </html>
+
 
 
 
