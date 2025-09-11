@@ -471,13 +471,12 @@
         const data = doc.data();
         allBooks.push({
           id: doc.id,
-          author: data.Author || '',
-          publication: data.Publication || '',
-          quantity: data.Quantity || '',
-          edition: data.Edition || '',
-          volume: data.Volume || '',
-          rack: data.Rack || '',
-          shelf: data.Shelf || '',
+          author: data.author || '',
+          publication: data.publication || '',
+          quantity: data.quantity || '',
+          edition: data.edition || '',
+          rack: data.rack || '',
+          shelf: data.shelf || ''
         });
       });
 
@@ -556,4 +555,5 @@
 
 </body>
 </html>
+
 
