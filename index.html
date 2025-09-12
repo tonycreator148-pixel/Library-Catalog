@@ -328,15 +328,12 @@
     }
   </style>
 
-  <!-- Firebase scripts -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <div class="app">
  <header>
   <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-    <h2>📚 2 Library Catalog</h2>
+    <h2>📚Library Catalog</h2>
     <img src="Library Logo (Upscaled).png" alt="Library Logo" class="logo">
   </div>
   <div class="dept-heading">Library – Department of Electronics</div>
@@ -408,6 +405,10 @@
     <footer>© 2025 My Library | All rights reserved.</footer>
   </div>
 
+  <!-- Firebase scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
   const enableSearchTypeButtons = false;  // set true to enable
   const buttonsContainer = document.getElementById('searchTypeButtonsContainer');
@@ -465,29 +466,28 @@
       snapshot.forEach(doc => {
         const data = doc.data();
         allBooks.push({
-          title: (data.bookName || '').toLowerCase(),
-          author: (data.author || '').toLowerCase(),
-          publication: (data.publication || '').toLowerCase(),
-          edition: (data.edition || '').toLowerCase(),
-          quantity: (data.quantity || '').toLowerCase(),
-          rack: (data.rack || '').toLowerCase(),
-          shelf: (data.shelf || '').toLowerCase(),
-          volume: (data.volume || '').toLowerCase()
+          title: data.bookName || '',
+          author: data.author || '',
+          publication: data.publication || '',
+          edition: data.edition || '',
+          quantity: data.quantity || '',
+          rack: data.rack || '',
+          shelf: data.shelf || '',
+          volume: data.volume || ''
         });
       });
 
-      const queryWords = query.split(/\s+/);
-
       const matchedBooks = allBooks.filter(book => {
-  let targetFields = [];
-  if (searchType === 'title') targetFields = [book.title];
-  else if (searchType === 'author') targetFields = [book.author];
-  else if (searchType === 'publication') targetFields = [book.publication];
-  else targetFields = [book.title, book.author, book.publication];
+        let targetFields = [];
+        if (searchType === 'title') targetFields = [book.title];
+        else if (searchType === 'author') targetFields = [book.author];
+        else if (searchType === 'publication') targetFields = [book.publication];
+        else targetFields = [book.title, book.author, book.publication];
 
-  const combinedText = targetFields.join(' ');
-  return combinedText.includes(query);
-});
+        // Compare case-insensitively but keep original case in display
+        const combinedText = targetFields.join(' ').toLowerCase();
+        return combinedText.includes(query);
+      });
 
       if (matchedBooks.length === 0) {
         noResultsMsg.style.display = 'block';
@@ -533,8 +533,10 @@
 </script>
 
 
+
 </body>
 </html>
+
 
 
 
