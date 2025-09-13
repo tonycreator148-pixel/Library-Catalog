@@ -428,12 +428,16 @@
     .rules-container {
         gap: 8px; /* minimal gap between stacked columns */
     }
+
+    
 }
 
 @media (max-width: 480px) {
     #searchInput::placeholder {
-        font-size: 0.9rem; /* smaller placeholder font */
+        font-size: 0.8rem; /* smaller placeholder font */
         min-height: 9.4em; /* approx 2 lines */
+        color: #6ca194;
+        font-family:unset
     }
 }
 
