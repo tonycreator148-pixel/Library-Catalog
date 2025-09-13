@@ -26,9 +26,17 @@
 
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', () => {
-    searchInput.style.height = 'auto'; // reset height
-    searchInput.style.height = searchInput.scrollHeight + 'px'; // expand
-    });
+  
+    if (searchInput.value.trim()) {
+    // If there's text → expand the height of the textbox based on text visible
+    searchInput.style.height = 'auto';
+    searchInput.style.height = searchInput.scrollHeight + 'px';
+  } else {
+    // If empty → reset to single-line
+    searchInput.style.height = 'auto';
+  }
+});
+
 
 // Search Functionality
   const searchBtn = document.getElementById('searchBtn');
@@ -39,14 +47,21 @@
 
 // Show/hide clear button
 
-    searchInput.addEventListener('input', () => {
-    clearBtn.style.display = searchInput.value ? 'block' : 'none';
-    });
+  searchInput.addEventListener('input', () => {
+  clearBtn.style.display = searchInput.value ? 'block' : 'none';
+
+  if (searchInput.value) {
+    searchInput.classList.add('has-text');
+  } else {
+    searchInput.classList.remove('has-text');
+  }
+});
 
 // Clear search input    
     clearBtn.addEventListener('click', (e) => {
     e.preventDefault();
     searchInput.value = '';
+    searchInput.style.height = 'auto'; // reset 
     clearBtn.style.display = 'none';
     searchInput.focus();
     // Optional: hide search results when cleared
@@ -221,3 +236,6 @@
             }
         });
   
+
+
+        
