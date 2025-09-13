@@ -129,34 +129,48 @@ clearBtn.addEventListener('click', (e) => {
         return;
       }
 
-      matchedBooks.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'book-tile';
-        card.innerHTML = `
-          <h4>${book.title}</h4>
-          <p><strong>Author:</strong> ${book.author || 'Unknown'}</p>
-          <div class="extra-details" aria-hidden="true">
-            ${book.publication ? `<p><strong>Publication:</strong> ${book.publication}</p>` : ''}
-            ${book.edition ? `<p><strong>Edition:</strong> ${book.edition}</p>` : ''}
-            ${book.volume ? `<p><strong>Volume:</strong> ${book.volume}</p>` : ''}
-            ${book.quantity ? `<p><strong>Quantity:</strong> ${book.quantity}</p>` : ''}
-            ${book.rack ? `<p class="rack">Rack: ${book.rack}</p>` : ''}
-            ${book.shelf ? `<p class="shelf">Shelf: ${book.shelf}</p>` : ''}
-          </div>
-        `;
-        card.addEventListener('click', () => {
-          document.querySelectorAll('.book-tile.expanded').forEach(otherCard => {
-            if (otherCard !== card) {
-              otherCard.classList.remove('expanded');
-              otherCard.querySelector('.extra-details').setAttribute('aria-hidden', 'true');
+matchedBooks.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'book-tile';
+
+    // Book title
+    let html = `<h4>${book.title}</h4>`;
+
+    // Author (optional fallback)
+    if (book.author) html += `<p><strong>Author:</strong> ${book.author}</p>`;
+
+    // Extra details dynamically
+    const extraFields = ['publication','edition','volume','quantity','rack','shelf'];
+    let extraHtml = '';
+    extraFields.forEach(field => {
+        if (book[field]) {
+            if (field === 'rack' || field === 'shelf') {
+                extraHtml += `<p class="${field}">${field.charAt(0).toUpperCase() + field.slice(1)}: ${book[field]}</p>`;
+            } else {
+                extraHtml += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> ${book[field]}</p>`;
             }
-          });
-          const extraDetails = card.querySelector('.extra-details');
-          const isExpanded = card.classList.toggle('expanded');
-          extraDetails.setAttribute('aria-hidden', isExpanded ? 'false' : 'true');
+        }
+    });
+
+    html += `<div class="extra-details" aria-hidden="true">${extraHtml}</div>`;
+    card.innerHTML = html;
+
+    // Toggle expand on click
+    card.addEventListener('click', () => {
+        document.querySelectorAll('.book-tile.expanded').forEach(otherCard => {
+            if (otherCard !== card) {
+                otherCard.classList.remove('expanded');
+                otherCard.querySelector('.extra-details').setAttribute('aria-hidden', 'true');
+            }
         });
-        resultsList.appendChild(card);
-      });
+        const extraDetails = card.querySelector('.extra-details');
+        const isExpanded = card.classList.toggle('expanded');
+        extraDetails.setAttribute('aria-hidden', isExpanded ? 'false' : 'true');
+    });
+
+    resultsList.appendChild(card);
+});
+
 
     } catch (error) {
       console.error("Error fetching books: ", error);
