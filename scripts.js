@@ -16,6 +16,10 @@
   const db = firebase.firestore();
 
   const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', () => {
+  searchInput.style.height = 'auto'; // reset height
+  searchInput.style.height = searchInput.scrollHeight + 'px'; // expand
+});
   const searchBtn = document.getElementById('searchBtn');
   const resultsSection = document.getElementById('searchResultsSection');
   const resultsList = document.getElementById('searchResultsList');
@@ -171,3 +175,4 @@ clearBtn.addEventListener('click', (e) => {
       performSearch();
     }
   });
+  
