@@ -475,6 +475,26 @@
         }
 
 
+    /* UI Settings for the Textarea inside the search bar */
+
+        #searchInput
+        {
+            width: 100%;
+            padding-right: 40px;
+            font-size: 1.2rem;
+            resize: none; /* prevent manual resizing */
+            overflow: hidden;
+            line-height: 1.4;
+            background: transparent;
+            border:0;
+            color: #ffffff;
+        }  
+
+        #searchInput:focus
+        {
+            outline: none;
+        }
+
 /*---------- Footer UI Settings ------------*/
 
     footer 
