@@ -4,539 +4,128 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Library Catalog — Search</title>
-
-  <style>
-    :root {
-      --bg1: #0f172a;
-      --bg2: #0b1f3a;
-      --card: #ffffff;
-      --accent: #4f46e5;
-      --muted: #9aa7c7;
-      --glass: rgba(255,255,255,0.06);
-    }
-    * { box-sizing: border-box; }
-    
-    .logo {
-  height: 50px; /* adjust size */
-  width: auto;
-  border-radius: 6px; /* optional rounded corners */
-  object-fit: contain;
-}
-
-    
-    body {
-      margin:0;
-      min-height:100vh;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color: #e6eef8;
-      background: linear-gradient(135deg,var(--bg1),var(--bg2));
-      padding:28px;
-      display:flex;
-      justify-content:center;
-    }
-    .app {
-      width:100%;
-      max-width:1100px;
-    }
-    header {
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      align-items:flex-start;
-      margin-bottom:18px;
-    }
-    h2 { margin:0; font-size:1.4rem; }
-    .dept-heading {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: white;
-      background: var(--accent);
-      text-align: center;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 6px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      width: 100%;
-    }
-    .searchpanel {
-      background: var(--glass);
-      padding:20px;
-      border-radius:12px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-      flex-wrap: wrap;
-    }
-    input[type="search"] {
-      flex:1;
-      background:transparent; border:0; color:inherit;
-      font-size:1.2rem;padding:10px; outline:none;
-      min-width: 250px;
-    }
-    .controls {
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap: wrap;
-    }
-    button, .searchTypeBtn {
-      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-      color:inherit; border:0; padding:10px 12px; border-radius:8px; font-weight:600;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      user-select:none;
-    }
-.btn-primary {
-  background: #f9de9f;
-  color: #333;
-  box-shadow: 0 6px 18px rgba(170, 249, 159, 0.6);
-  font-size: 1.2rem;          /* increased font size */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* new font style */
-  font-weight: 600;           /* slightly bolder */
-  padding: 10px 16px;         /* slightly bigger padding for better click area */
-}
-
-
-    .searchTypeBtn:hover {
-      background-color: rgba(79, 70, 229, 0.5);
-      color: white;
-    }
-    .searchTypeBtn.active {
-      background-color: var(--accent);
-      color: white;
-    }
-
-    p.note {
-      font-style: italic;
-      color: #c0c8e8;
-      margin-top: 6px;
-      font-size: 0.9rem;
-    }
-
-    /* Search Results Section */
-
-    /* Container grid for results */
-    #searchResultsList {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-      padding-left: 0;
-      margin: 0;
-      list-style: none;
-    }
-
-    /* Each book tile card */
-    .book-tile {
-      background: #1B4B2D;
-      border-radius: 18px;
-      padding: 20px 24px;
-      box-shadow: 0 10px 25px rgba(15,23,42,0.6);
-      color: #e6eef8;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      min-height: 140px;
-      cursor: pointer;
-      user-select: text;
-      overflow: hidden;
-
-      /* collapsed state */
-      max-height: 150px;
-      transition: max-height 0.5s ease, padding-bottom 0.5s ease, box-shadow 0.3s ease, transform 0.3s ease;
-    }
-    .book-tile:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 30px rgba(79,70,229,0.4);
-    }
-    .book-tile.expanded {
-      max-height: 500px; /* expanded height */
-      padding-bottom: 40px;
-      box-shadow: 0 18px 40px rgba(79,70,229,0.6);
-    }
-
-    .book-tile h4 {
-      margin: 0 0 14px 0;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #ffffff; /* vivid purple */
-      line-height: 1.2;
-      user-select: text;
-    }
-    .book-tile p strong{
-      margin: 4px 0;
-      font-size: 1rem;
-      color: #eaf698;
-      user-select: text;
-    }
-
-    .book-tile p {
-    color: #d1d5db; /* soft light gray */
-    font-weight: 500;
-}
-
-
-    /* Extra details hidden by default, shown on expand */
-    .extra-details {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s ease, opacity 0.4s ease;
-      margin-top: 0;
-      opacity: 0;
-    }
-    .book-tile.expanded .extra-details {
-      max-height: 1000px; /* large enough */
-      margin-top: 12px;
-      opacity: 1;
-    }
-
-    /* Rack and Shelf as badges */
-    .extra-details p.rack,
-    .extra-details p.shelf {
-      display: inline-block;
-      font-family: 'Courier New', Courier, monospace;
-      background-color: #4ef2c1;
-      color: #0b1f3a;
-      padding: 4px 10px;
-      border-radius: 13px;
-      font-weight: 700;
-      font-size: 1.05rem;
-      box-shadow: 0 0 6px rgba(242, 233, 78, 0.7);
-      user-select: none;
-      margin-top: 6px;
-      margin-right: 30px;
-    }
-
-    #noResultsMessage {
-      font-style: italic;
-      color: #c0c8e8;
-      margin-top: 18px;
-    }
-    
-    @keyframes scrollImages {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-/* Rules Section */
-.rules {
-  padding: 30px;
-  background-color: #f5f5f5;
-  border-radius: 10px;
-  margin-top: 30px;
-  color: #2f4f4f; /* dark slate-gray for text */
-}
-
-.rules h2 {
-  text-align: center;
-  font-size: 26px;
-  margin-bottom: 20px;
-  color: #2f4f4f;
-}
-
-.rules-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 40px;
-}
-
-.rules-left, .rules-right {
-  flex: 1;
-  list-style-type: "📖 ";
-  font-size: 20px;
-  line-height: 1.6;
-  color: #2f4f4f;
-}
-
-.rules-left li, .rules-right li {
-  margin-bottom: 10px;
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  body {
-    padding: 16px; /* Reduce padding for smaller screens */
-  }
-
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .dept-heading {
-    font-size: 1.1rem;
-    padding: 8px;
-  }
-
-  .searchpanel {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  input[type="search"] {
-    min-width: 0; /* Allow input to shrink */
-    width: 100%;
-  }
-
-  .controls {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .rules-container {
-    flex-direction: column; /* Stack rules vertically */
-    gap: 20px;
-  }
-
-  .image-scroll-container img {
-    height: 120px; /* Slightly smaller images for mobile */
-  }
-}
-
-@media (max-width: 480px) {
-  h2 {
-    font-size: 1.2rem;
-  }
-
-  .dept-heading {
-    font-size: 1rem;
-  }
-
-  .btn-primary {
-    font-size: 1rem;
-    padding: 8px 12px; /* Adjust button size for mobile */
-  }
-
-  .book-tile {
-    padding: 16px;
-  }
-
-  .image-scroll-container img {
-    height: 100px; /* Smaller images for very small screens */
-  }
-}
-
-    footer {
-      margin-top:18px;
-      color:var(--muted);
-      font-size:0.9rem;
-      text-align:center;
-    }
-  </style>
-
 </head>
+
 <body>
   <div class="app">
- <header>
-  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-    <h2>📚Library Catalog</h2>
-    <img src="Library Logo (Upscaled).png" alt="Library Logo" class="logo">
-  </div>
-  <div class="dept-heading">Library – Department of Electronics</div>
-</header>
-
-
-    <div class="searchpanel" role="search">
-      <input id="searchInput" type="search" placeholder="Search by book name, author, or publication..." autocomplete="off" />
-      <button id="searchBtn" class="btn-primary">Search</button>
-      
-      <!-- Buttons container will be toggled by JS -->
-      <div id="searchTypeButtonsContainer" class="controls">
-        <button id="searchByTitle" class="searchTypeBtn" data-type="title">Book Name</button>
-        <button id="searchByAuthor" class="searchTypeBtn" data-type="author">Author</button>
-        <button id="searchByPublisher" class="searchTypeBtn" data-type="publisher">Publication</button>
+    <header>
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <h2>📚Books Catalog</h2>
+        <img src="Library Logo (Upscaled).png" alt="Library Logo" class="logo">
       </div>
-    </div>
-    
-    <!-- <p class="note">Select the search type for faster response</p> -->
-    
-    
+      <div class="dept-heading">Library – Department of Electronics</div>
 
-    <section id="searchResultsSection" style="display:none;">
-      <h3>Searched Books</h3>
-      <div id="searchResultsList"></div>
+    <!---------------- Link to external CSS file ---------------------------------------------------------------->
 
-      <p id="noResultsMessage" style="display:none;">No Book available.</p>
-    </section>
-  <!-- Add this inside the .app container, before the footer -->
-<div class="image-scroll-container" aria-label="Scrolling library images" role="region" style="overflow:hidden; margin: 20px 0; border-radius: 12px;">
-  <div class="image-scroll-track" style="display: flex; width: max-content; animation: scrollImages 40s linear infinite;">
-    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794" alt="Library image 1" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f" alt="Library image 2" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 3" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba" alt="Library image 4" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3" alt="Library image 5" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 6" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <!-- repeat same images for smooth loop -->
-    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794" alt="Library image 1" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f" alt="Library image 2" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 3" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba" alt="Library image 4" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3" alt="Library image 5" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 6" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
-  </div>
-</div>
+    <link rel="stylesheet" href="style.css">
 
- <!-- Library Rules Section -->
-<section class="rules" aria-label="Library Rules">
-  <h2>📚 Library Rules</h2>
-  <div class="rules-container">
-    <ul class="rules-left">
-      <li>Maintain silence at all times inside the library.</li>
-      <li>Keep mobile phones on silent mode.</li>
-      <li>Return borrowed books on time.</li>
-      <li>Do not eat or drink inside the library.</li>
-      <li>Handle books and materials with care.</li>
-    </ul>
-    <ul class="rules-right">
-      <li>Do not write or mark in library books.</li>
-      <li>Use computers for educational purposes only.</li>
-      <li>Respect library staff and other users.</li>
-      <li>Follow proper checkout procedures.</li>
-      <li>Report lost or damaged books immediately.</li>
-    </ul>
-  </div>
-</section>
 
-    <footer>© 2025 My Library | All rights reserved.</footer>
-  </div>
+    </header>
 
-  <!-- Firebase scripts -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<script>
-  const enableSearchTypeButtons = false;  // set true to enable
-  const buttonsContainer = document.getElementById('searchTypeButtonsContainer');
-  if (!enableSearchTypeButtons) buttonsContainer.style.display = 'none';
+      <div class="searchpanel" role="search">
+        <div class="search-input-wrap">
+          <input id="searchInput" type="search" placeholder="Search by book name, author, or publication..." autocomplete="off" />
+          <button id="clearBtn" class="clear-btn" aria-label="Clear search" title="Clear search">
+          <img src="TC-2.svg" alt="Clear" />
+          </button>
+        </div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBF1hRE2scvmQBIyRNBT7EPZl5PFLEzeTk",
-    authDomain: "library-database-306ec.firebaseapp.com",
-    projectId: "library-database-306ec",
-    storageBucket: "library-database-306ec.firebasestorage.app",
-    messagingSenderId: "155778078089",
-    appId: "1:155778078089:web:2e59a765a4d9902cca3d58"
-  };
+        <button id="searchBtn" class="btn-primary">Search</button>
+          
+        <!---------- Buttons container will be toggled by JS ------------------------->
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+        <div id="searchTypeButtonsContainer" class="controls">
+          <button id="searchByTitle" class="searchTypeBtn" data-type="rack">Rack Number</button>
+        
+          <!-- Below lines adds two more buttons in filter, "Book Name, Author , Publication" but these are disabled by default,
+                because adding more buttons , disrupts the UI arrangement.
 
-  const searchInput = document.getElementById('searchInput');
-  const searchBtn = document.getElementById('searchBtn');
-  const resultsSection = document.getElementById('searchResultsSection');
-  const resultsList = document.getElementById('searchResultsList');
-  const noResultsMsg = document.getElementById('noResultsMessage');
+                <button id="searchByAuthor" class="searchTypeBtn" data-type="author">Author</button>
+                <button id="searchByPublisher" class="searchTypeBtn" data-type="publisher">Publication</button>
+          -->
 
-  let searchType = null;
-  const typeButtons = document.querySelectorAll('.searchTypeBtn');
-  typeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      searchType = btn.getAttribute('data-type');
-      typeButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  });
+        </div>
+      </div>
+        
+      <!-------------------- Search Results Section -------------------------------------------->   
 
-  searchBtn.addEventListener('click', async () => {
-    const query = searchInput.value.trim().toLowerCase();
-    if (!query) {
-      resultsSection.style.display = 'none';
-      return;
-    }
+        <section id="searchResultsSection" style="display:none;">
+          <h3>Searched Books</h3>
+          <div id="searchResultsList"></div>
+          <p id="noResultsMessage" style="display:none;">No Book available.</p>
+        </section>
 
-    resultsSection.style.display = 'block';
-    resultsList.innerHTML = '';
-    noResultsMsg.style.display = 'none';
+      <!-------------------- Scrolling Image Gallery Section ----------------------------->
 
-    try {
-      const snapshot = await db.collection('All_Books').get();
+        <!-- Add this inside the .app container, before the footer -->
 
-      if (snapshot.empty) {
-        noResultsMsg.style.display = 'block';
-        noResultsMsg.textContent = 'No books found in the database.';
-        return;
-      }
-
-      const allBooks = [];
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        allBooks.push({
-          title: data.bookName || '',
-          author: data.author || '',
-          publication: data.publication || '',
-          edition: data.edition || '',
-          quantity: data.quantity || '',
-          rack: data.rack || '',
-          shelf: data.shelf || '',
-          volume: data.volume || ''
-        });
-      });
-
-      const matchedBooks = allBooks.filter(book => {
-        let targetFields = [];
-        if (searchType === 'title') targetFields = [book.title];
-        else if (searchType === 'author') targetFields = [book.author];
-        else if (searchType === 'publication') targetFields = [book.publication];
-        else targetFields = [book.title, book.author, book.publication];
-
-        // Compare case-insensitively but keep original case in display
-        const combinedText = targetFields.join(' ').toLowerCase();
-        return combinedText.includes(query);
-      });
-
-      if (matchedBooks.length === 0) {
-        noResultsMsg.style.display = 'block';
-        noResultsMsg.textContent = 'No Book available.';
-        return;
-      }
-
-      matchedBooks.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'book-tile';
-        card.innerHTML = `
-          <h4>${book.title}</h4>
-          <p><strong>Author:</strong> ${book.author || 'Unknown'}</p>
-          <div class="extra-details" aria-hidden="true">
-            ${book.publication ? `<p><strong>Publication:</strong> ${book.publication}</p>` : ''}
-            ${book.edition ? `<p><strong>Edition:</strong> ${book.edition}</p>` : ''}
-            ${book.volume ? `<p><strong>Volume:</strong> ${book.volume}</p>` : ''}
-            ${book.quantity ? `<p><strong>Quantity:</strong> ${book.quantity}</p>` : ''}
-            ${book.rack ? `<p class="rack">Rack: ${book.rack}</p>` : ''}
-            ${book.shelf ? `<p class="shelf">Shelf: ${book.shelf}</p>` : ''}
+        <div class="image-scroll-container" aria-label="Scrolling library images" role="region" style="overflow:hidden; margin: 20px 0; border-radius: 12px;">
+      
+          <div class="image-scroll-track" style="display: flex; width: max-content; animation: scrollImages 40s linear infinite;">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794" alt="Library image 1" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f" alt="Library image 2" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 3" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba" alt="Library image 4" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3" alt="Library image 5" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 6" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+        
+            <!-- repeat same images for smooth loop -->
+        
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794" alt="Library image 1" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f" alt="Library image 2" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 3" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba" alt="Library image 4" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3" alt="Library image 5" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
+            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Library image 6" style="height: 160px; margin-right: 12px; border-radius: 8px;" />
           </div>
-        `;
-        card.addEventListener('click', () => {
-          document.querySelectorAll('.book-tile.expanded').forEach(otherCard => {
-            if (otherCard !== card) {
-              otherCard.classList.remove('expanded');
-              otherCard.querySelector('.extra-details').setAttribute('aria-hidden', 'true');
-            }
-          });
-          const extraDetails = card.querySelector('.extra-details');
-          const isExpanded = card.classList.toggle('expanded');
-          extraDetails.setAttribute('aria-hidden', isExpanded ? 'false' : 'true');
-        });
-        resultsList.appendChild(card);
-      });
+        </div>
 
-    } catch (error) {
-      console.error("Error fetching books: ", error);
-      noResultsMsg.style.display = 'block';
-      noResultsMsg.textContent = 'Error fetching books.';
-    }
-  });
-</script>
+      
+      <!---------------------------- Library Rules Section -------------------------------------------------------------------------------------------------------------------->
 
+        <section class="rules" aria-label="Library Rules">
+          <h2>📚 Library Rules</h2>
+          <div class="rules-container">
 
+            <!---- Rules written on the left side  ---->
+
+              <ul class="rules-left">
+                <li>Maintain silence at all times inside the library.</li>
+                <li>Keep mobile phones on silent mode.</li>
+                <li>Return borrowed books on time.</li>
+                <li>Do not eat or drink inside the library.</li>
+                <li>Handle books and materials with care.</li>
+              </ul>
+
+            <!---- Rules written on the left side  ---->
+            
+              <ul class="rules-right">
+                <li>Do not write or mark in library books.</li>
+                <li>Use computers for educational purposes only.</li>
+                <li>Respect library staff and other users.</li>
+                <li>Follow proper checkout procedures.</li>
+                <li>Report lost or damaged books immediately.</li>
+              </ul>
+          </div>
+        </section>
+
+      <!---- Footer Section  ---->
+
+        <footer>© 2025 My Library | All rights reserved.</footer>
+  </div>
+
+  <!-------------- Firebase scripts -------------->
+  
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- Link to external JS file -->
+
+    <script src="scripts.js"></script>
 
 </body>
 </html>
-
 
 
 
