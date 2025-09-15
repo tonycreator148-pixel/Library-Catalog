@@ -1,6 +1,6 @@
 // Filters Section Enable / Disable
 
-  const enableSearchTypeButtons = false;  // set true to enable
+  const enableSearchTypeButtons = true;  // set true to enable
   
   
   const buttonsContainer = document.getElementById('searchTypeButtonsContainer');
@@ -217,11 +217,17 @@
                 resultsList.appendChild(card);
             });
 
+document.getElementById('resultsCount').textContent =
+  `Number of results: ${matchedBooks.length}`;
+
+
             } catch (error) {
             console.error("Error fetching books: ", error);
             noResultsMsg.style.display = 'block';
             noResultsMsg.textContent = 'Error fetching books.';
             }
+
+
         }
 
 
