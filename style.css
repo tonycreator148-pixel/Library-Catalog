@@ -133,7 +133,7 @@
 
                 .searchTypeBtn:hover
                 {
-                    background-color: rgba(79, 70, 229, 0.5);
+                    background-color: rgba(46, 203, 195, 0.5);
                     color: white;
                 }
                 
@@ -429,6 +429,25 @@
         gap: 8px; /* minimal gap between stacked columns */
     }
 
+
+    /* Adjustment of "Searched Books" title and results count for small screens */
+
+    .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;              /* reduce gap */
+    margin: 10px 0;        /* compact spacing */
+  }
+@media (max-width: 480px) {
+  #searchResultsSection h3 {
+    font-size: 15px;
+  }
+  #resultsCount {
+    font-size: 14px;
+  }
+}
+
     
 }
 
@@ -522,6 +541,53 @@
         {
             outline: none;
         }
+
+.results-header {
+  display: flex;
+  justify-content: space-between; /* left/right alignment */
+  align-items: center;
+  margin: 20px 0 10px;
+}
+
+.searched-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.results-count {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e4af4e;
+}
+
+.book-tile h4
+        {
+            margin: 0 0 14px 0;
+            font-size: 1.0rem;
+            font-weight: 700;
+            color: #ffffff; /* vivid purple */
+            line-height: 1.2;
+            user-select: text;
+        }
+
+/*--------------- Rack and Shelf as badges ----------------*/
+
+
+
+
+/* Extra compact for very small screens */
+@media (max-width: 480px) {
+  .extra-details p.rack,
+  .extra-details p.shelf {
+    padding: 13px 15px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+    margin-right: 24px;  /* space to the right */
+    display: inline-block; /* ensures horizontal alignment */
+  }
+}
+
 
 /*---------- Footer UI Settings ------------*/
 
