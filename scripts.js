@@ -1,6 +1,6 @@
 // Filters Section Enable / Disable
 
-  const enableSearchTypeButtons = true;  // set true to enable
+  const enableSearchTypeButtons = false;  // set true to enable
   
   
   const buttonsContainer = document.getElementById('searchTypeButtonsContainer');
