@@ -172,6 +172,15 @@
                 return;
             }
 
+
+            // ✅ Sort results by rack number in ascending order
+matchedBooks.sort((a, b) => {
+    const rackA = parseInt(a.rack, 10) || 0;
+    const rackB = parseInt(b.rack, 10) || 0;
+    return rackA - rackB;
+});
+
+
         // Dynamically create book tiles
     
                 matchedBooks.forEach(book => {
