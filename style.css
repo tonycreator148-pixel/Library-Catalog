@@ -197,12 +197,12 @@
 
     /* Expanded state */
 
-        .book-tile.expanded
-        {
-            max-height: 500px; /* expanded height */
-            padding-bottom: 40px;
-            box-shadow: 0 18px 40px rgba(79,70,229,0.6);
-        }
+.book-tile.expanded {
+    max-height: none;       /* allow full height */
+    padding-bottom: 16px;   /* reduce extra bottom padding */
+    box-shadow: 0 18px 40px rgba(79,70,229,0.6);
+}
+
 
     /* Title and Author */
             
@@ -409,7 +409,12 @@
 
     .book-tile {
         padding: 16px;
+
+        
     }
+
+
+
 
     .image-scroll-container img {
         height: 100px; /* Smaller images for very small screens */
