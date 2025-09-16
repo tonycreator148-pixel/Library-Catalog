@@ -169,7 +169,7 @@
 
         .book-tile
         {
-            background: #212b25;
+            background: #22382c;
             border-radius: 18px;
             padding: 20px 24px;
             box-shadow: 0 10px 25px rgba(15,23,42,0.6);
@@ -586,7 +586,7 @@
   .extra-details p.rack,
   .extra-details p.shelf {
     padding: 13px 15px;
-    font-size: 0.9rem;
+    font-size: 0.97rem;
     border-radius: 12px;
     margin-right: 24px;  /* space to the right */
     display: inline-block; /* ensures horizontal alignment */
